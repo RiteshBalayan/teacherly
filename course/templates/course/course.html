@@ -1,0 +1,33 @@
+{% extends 'core/base2.html' %}
+
+{% block title %} Home {% endblock %}
+
+
+
+
+
+
+{% block sidebar %}
+        
+                {% if course.chapters.all.exists %} <!-- Check if there are any chapters -->
+                    {% for chapter in course.chapters.all %} <!-- Iterating over chapters -->
+                        <a href="{% url 'chapter' pk=course.id   chapter_pk=chapter.id %}" class="text-lg font-semibold text-gray-800 hover:text-teal-500">{{ chapter.title }}</a>
+                    {% endfor %}
+                {% else %}
+                    <p>No Chapters</p>
+                {% endif %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="bg-gradient-to-r from-purple-400 to-pink-600 py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto text-center">
+        <h6 class="text-4xl text-white font-semibold tracking-wider">{{ course.title }}</h6>
+        <h1 class="mt-2 text-xl leading-10 font-extrabold text-white sm:text-5xl sm:leading-none sm:tracking-tight lg:text-6xl">{{ course.description }}</h1>
+        <!-- Display image content -->
+            <img src="{{ course.thumbnail.url }}" alt="{{ image.title }}" class="mt-8 rounded-lg shadow-lg max-w-full mx-auto h-auto">
+        <a href="{% url 'create_chapter' pk=course.id %}" class="mt-12 inline-block px-6 py-3 text-lg font-semibold text-gray-800 bg-white rounded-full hover:bg-teal-500 hover:text-white transition duration-300 ease-in-out">Edit Course</a>
+    </div>
+</div>
+{% endblock %}

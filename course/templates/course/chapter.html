@@ -1,0 +1,136 @@
+{% extends 'core/base2.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block section %}
+    
+{% endblock %}
+
+
+
+
+{% block sidebar %}
+        
+                {% if course.chapters.all.exists %} <!-- Check if there are any chapters -->
+                    {% for chapter in course.chapters.all %} <!-- Iterating over chapters -->
+                        <a href="{% url 'chapter' pk=course.id   chapter_pk=chapter.id %}" class="text-lg font-semibold text-gray-800 hover:text-teal-500">{{ chapter.title }}</a>
+                    {% endfor %}
+                {% else %}
+                    <p>No Chapters</p>
+                {% endif %}
+
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="flex flex-col items-center">
+        
+            <!-- Container with aspect ratio -->
+            <div class="aspect-w-9 aspect-h-16 w-2/5 mb-4 bg-gray-200 relative">
+                {% if current_page %}
+                    
+
+                    {% if current_page.0.images.all.exists %}
+                        
+                        {% for image in current_page.0.images.all %}
+                            <!-- Display image content -->
+                            <img src="{{ image.image_file.url }}" alt="{{ image.title }}" class="rounded-md w-full h-auto">
+
+                            {% if image.explanation %}
+                                <h1>{{ image.explanation }}</h1>
+                            {% endif %}
+
+                        {% empty %}
+                            <p> no Nontent</p>
+                        {% endfor %}
+                    
+                    {% elif current_page.0.articles.all.exists %}
+
+                        {% for artice in current_page.0.articles.all %}
+
+                            <h1><strong>{{ artice.title }}</strong></h1>
+                            <!-- Display article content -->
+                            <p>{{ artice.content }}</p>
+                        {% empty %}
+                            <p> no Nontent</p>
+                        {% endfor %}
+
+
+                    {% elif current_page.0.questions.all.exists %}
+
+                        {% for question in current_page.0.questions.all %}
+                            <!-- Display question content -->
+                            <p>{{ question.question_text }}</p>
+                            <br>
+
+                            {% if question.options.all %}
+                                {% for option in question.options.all %}
+                                    <p>{{ option.option_text }}</p>
+                                    <br>
+                                {% endfor %}
+                            {% endif %}
+
+                        {% empty %}
+                            <p> no Nontent</p>
+                        {% endfor %}
+
+                    {% elif current_page.0.videos.all.exists %}
+
+                        {% for video in current_page.0.videos.all %}
+                        
+                            <!-- Video player adjusted to fit container size -->
+                            <video class="w-full h-full" controls="controls">
+                            <source src="{{video.video_file.url}}" type="video/mp4" />
+                            </video>
+
+                            {% if video.explanation %}
+                                <h1>{{ video.explanation }}</h1>
+                            {% endif %}
+
+                        {% empty %}
+                            <p> no Nontent</p>
+                        {% endfor %}
+
+                    
+                    {% endif %}
+            </div>
+
+            <!-- Navigation buttons below the player -->
+            <div class="flex justify-between w-2/5">
+                <a href="{% if current_page.has_previous %}?page={{ current_page.previous_page_number }}{% else %}?page=1{% endif %}" class="bg-blue-500 text-white px-4 py-2 rounded {% if not current_page.has_previous %}hidden{% endif %}">Previous</a>
+                <a href="{% if current_page.has_next %}?page={{ current_page.next_page_number }}{% else %}?page=1{% endif %}" class="bg-green-500 text-white px-4 py-2 rounded {% if not current_page.has_next %}hidden{% endif %}">Next</a>
+            </div>
+
+                <!-- Comment Form -->
+    <div class="w-2/5 mt-8">
+        <h2 class="text-xl font-semibold mb-4">Add Comment</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">Submit Comment</button>
+        </form>
+    </div>
+
+    <!-- List of Comments -->
+    <div class="w-2/5 mt-8">
+        <h2 class="text-xl font-semibold mb-4">Comments</h2>
+        <ul>
+            {% for comment in current_page.0.comments.all %}
+                <li class="mb-4">
+                    <strong>{{ comment.creator.username }}:</strong> {{ comment.comment }}
+                </li>
+            {% empty %}
+                <li>No comments yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+        {% else %}
+            <p class="text-lg text-gray-500">No content available.</p>
+        {% endif %}
+    </div>
+
+
+
+{% endblock %}

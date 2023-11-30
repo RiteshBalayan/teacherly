@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Create | Bitesize{% endblock %}
+
+{% block section %}
+    <p class="text-3xl font-bold text-gray-600">Bitesize Create</p>
+{% endblock %}
+
+{% block content %}
+<div class="flex justify-center">
+    <!-- Box for Creating an Article -->
+    <a href="{% url 'create_article' %}" class="box-link">
+        <div class="box bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg">
+            Create Article
+        </div>
+    </a>
+
+    <!-- Box for Creating a Video -->
+    <a href="{% url 'create_video' %}" class="box-link">
+        <div class="box bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg">
+            Create Video
+        </div>
+    </a>
+
+    <!-- Box for Creating an Image -->
+    <a href="{% url 'create_image' %}" class="box-link">
+        <div class="box bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg">
+            Create Image
+        </div>
+    </a>
+</div>
+
+<style>
+    /* CSS styles for the square boxes and centering */
+    .box-link {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .box {
+        width: 150px; /* Adjust the size as needed */
+        height: 150px; /* Make the boxes square */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s;
+    }
+</style>
+{% endblock %}
+

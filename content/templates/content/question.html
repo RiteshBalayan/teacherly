@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Forum {% endblock %}
+
+{% block section %}
+    <p class="text-3xl font-bold text-gray-600">Forum</p>
+{% endblock %}
+
+{% block content %}
+    <div class="container mx-auto mt-8">
+        <h1 class="text-2xl font-semibold mb-4">Question</h1>
+
+        <div class="mb-4">
+            <p class="text-lg">{{ question.question_text }}</p>
+        </div>
+
+        <!-- List of Comments -->
+        <div class="w-2/3">
+            <h2 class="text-xl font-semibold mb-4">Answers</h2>
+            <ul>
+                {% for comment in question.comments.all %}
+                    <li class="mb-4">
+                        <span class="font-semibold">{{ comment.creator.username }}:</span>
+                        <span class="ml-2">{{ comment.comment }}</span>
+                    </li>
+                {% empty %}
+                    <li>No comments yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Comment Form -->
+        <div class="w-2/3 mt-8">
+            <h2 class="text-xl font-semibold mb-4">Add Answer</h2>
+            <form method="post" class="space-y-2">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">
+                    Submit Answer
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

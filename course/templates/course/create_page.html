@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Create {% endblock %}
+
+{% block section %}
+<div class="flex items-center space-x-4">
+    <div class="bg-pink-300 p-2 rounded-md">
+        <p class="text-white font-bold text-lg">Creator Mode</p>
+    </div>  
+    <p class="text-3xl font-bold text-gray-600">Course </p>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex space-x-2">
+    <a href="{% url 'create_chapter' pk=course.id %}">
+        <p class="text-3xl font-bold text-gray-600">{{ course.title }}</p>
+    </a>
+    <a href="#">
+        <p class="text-3xl font-bold text-gray-600">| {{ chapter.title }}</p>
+    </a>
+</div>
+
+<div class="container mx-auto px-4 py-6 space-y-4">
+
+    {% for page in pages %}
+    <a href="{% url 'page' pk=course.id chapter_pk=chapter.id page_pk=page.id %}" class="block bg-white rounded-lg shadow-md p-4 hover:shadow-lg">{{ page.title }}</a>
+    {% empty %}
+
+    {% endfor %}
+    
+    <div class="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label for="id_title" class="block text-sm font-medium text-gray-700">New Page Name</label>
+                {{ form.title }}
+            </div>
+
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Create Page</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

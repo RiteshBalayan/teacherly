@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+
+{% block title %} Page {% endblock %}
+
+{% block section %}
+<div class="flex items-center space-x-4">
+    <div class="bg-pink-300 p-2 rounded-md">
+        <p class="text-white font-bold text-lg">Creator Mode</p>
+    </div>  
+    <p class="text-3xl font-bold text-gray-600">Course </p>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="flex space-x-2">
+    <a href="{% url 'create_chapter' pk=course.id %}">
+        <p class="text-3xl font-bold text-gray-600">{{ course.title }}</p>
+    </a>
+    <a href="{% url 'create_page' pk=course.id chapter_pk=chapter.id %}">
+        <p class="text-3xl font-bold text-gray-600">| {{ chapter.title }}</p>
+    </a>
+    <a href="#">
+        <p class="text-3xl font-bold text-gray-600">| {{ page.title }}</p>
+    </a>
+</div>
+
+<div class="flex justify-center">
+    <div class="w-1/3"> <!-- Set the width to 2/3 of the parent container -->
+        <div class="flex flex-col items-center">
+        
+            {% if images.exists %}
+                            
+                {% for image in images %}
+                    <!-- Display image content -->
+                    <img src="{{ image.image_file.url }}" alt="{{ image.title }}" class="rounded-md w-full h-auto">
+    
+                    {% if image.explanation %}
+                        <h1>{{ image.explanation }}</h1>
+                    {% endif %}
+    
+                {% empty %}
+                    <p> no Content</p>
+                {% endfor %}
+            {% endif %}
+            
+            {% if articles.exists %}
+    
+                {% for article in articles %}
+    
+                    <h1><strong>{{ article.title }}</strong></h1>
+                    <!-- Display article content -->
+                    <p>{{ article.content }}</p>
+                {% empty %}
+                    <p> no Content</p>
+                {% endfor %}
+            {% endif %}
+    
+    
+            {% if questions.exists %}
+    
+                {% for question in questions %}
+                    <!-- Display question content -->
+                    <p>{{ question.question_text }}</p>
+                    <br>
+    
+                    {% if question.options.all %}
+                        {% for option in question.options.all %}
+                            <p>{{ option.option_text }}</p>
+                            <br>
+                        {% endfor %}
+                    {% endif %}
+    
+                {% empty %}
+                    <p> no Content</p>
+                {% endfor %}
+            {% endif %}
+    
+            {% if videos.exists %}
+    
+                {% for video in videos %}
+                
+                    <!-- Video player adjusted to fit container size -->
+                    <video class="w-full h-full" controls="controls">
+                        <source src="{{ video.video_file.url }}" type="video/mp4" />
+                    </video>
+    
+                    {% if video.explanation %}
+                        <h1>{{ video.explanation }}</h1>
+                    {% endif %}
+    
+                {% empty %}
+                    <p> no Content</p>
+                {% endfor %}
+            {% endif %}
+    
+        </div>
+    </div>
+</div>
+
+<!-- Big Rectangular Shiny Box -->
+<div class="bg-gradient-to-r from-yellow-300 to-red-500 p-4 mt-4 rounded-lg text-center">
+    <a href="{% url 'add_page' pk=course.id chapter_pk=chapter.id page_pk=page.id %}" class="text-white font-bold text-xl hover:underline">Add Now</a>
+</div>
+
+{% endblock %}
