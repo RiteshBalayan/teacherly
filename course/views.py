@@ -11,10 +11,14 @@ from django.contrib.contenttypes.models import ContentType
 
 def course_view(request, pk):
     course = get_object_or_404(Course, pk=pk)
+
+    teacher = course.teacher
+
     first_chapter = Chapter.objects.filter(pk=course.id).first()
     return render(request, 'course/course.html', {
         'course':course,
         'first_chapter': first_chapter,
+        'teacher':teacher,
     })
 
 

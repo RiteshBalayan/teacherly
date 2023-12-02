@@ -31,24 +31,43 @@
                         <!-- Display image content -->
                         <img src="{{ current_content.0.image_file.url }}" alt="{{ current_content.0.title }}" class="rounded-md w-full h-auto">
 
+                        <h1 class="text-2xl font-semibold mb-4">Explanation</h1>
                         {% if current_content.0.explanation %}
                             <h1>{{ current_content.0.explanation }}</h1>
                         {% endif %}
+                        <br>
+                        <a href="{% url 'user_profile' pk=current_content.0.user.id %}" class="flex items-center space-x-3">
+                            <img src="{{ current_content.0.user.Profile.profile_pic.url }}" alt="{{ current_content.0.user.username }}" class="w-10 h-10 rounded-full"> <!-- Profile Picture -->
+                            <h1 class="text-lg font-semibold">by: <strong>{{ current_content.0.user.username }}</strong></h1> <!-- Larger Text -->
+                        </a>
                     
                     {% elif current_content.0.content %}
                         <h1><strong>{{ current_content.0.title }}</strong></h1>
                         <!-- Display article content -->
                         <p>{{ current_content.0.content }}</p>
-                    {% elif current_content.0.question_text %}
-                        <!-- Display question content -->
-                        <p>{{ current_content.0.question_text }}</p>
+                        <br>
+                        <a href="{% url 'user_profile' pk=current_content.0.user.id %}" class="flex items-center space-x-3">
+                            <img src="{{ current_content.0.user.Profile.profile_pic.url }}" alt="{{ current_content.0.user.username }}" class="w-10 h-10 rounded-full"> <!-- Profile Picture -->
+                            <h1 class="text-lg font-semibold">by: <strong>{{ current_content.0.user.username }}</strong></h1> <!-- Larger Text -->
+                        </a>
 
-                        {% if current_content.0.options.all %}
-                        {% for option in current_content.0.options.all %}
-                            <p>{{ option.option_text }}</p>
-                            <br>
-                        {% endfor %}
-                    {% endif %}
+                    {% elif current_content.0.comment %}
+                        <!-- Display question content -->
+                        <h1 class="text-2xl font-semibold mb-4">Question</h1>
+                        <br>
+                        <p>{{ current_content.0.content_object.question_text }}</p>
+                        <br>
+                        <!-- Video player adjusted to fit container size -->
+                        <br>
+                        <h1 class="text-2xl font-semibold mb-4">Answer</h1>
+                        <video class="w-full h-full" controls="controls">
+                            <source src="{{current_content.0.comment.url}}" type="video/mp4" />
+                        </video>
+                        <a href="{% url 'user_profile' pk=current_content.0.creator.id %}" class="flex items-center space-x-3">
+                            <img src="{{ current_content.0.creator.Profile.profile_pic.url }}" alt="{{ current_content.0.creator.username }}" class="w-10 h-10 rounded-full"> <!-- Profile Picture -->
+                            <h1 class="text-lg font-semibold">Answered by: <strong>{{ current_content.0.creator.username }}</strong></h1> <!-- Larger Text -->
+                        </a>
+
 
                     {% elif current_content.0.video_file %}
                         
@@ -60,6 +79,10 @@
                         {% if current_content.0.explanation %}
                             <h1>{{ current_content.0.explanation }}</h1>
                         {% endif %}
+                        <a href="{% url 'user_profile' pk=current_content.0.user.id %}" class="flex items-center space-x-3">
+                            <img src="{{ current_content.0.user.Profile.profile_pic.url }}" alt="{{ current_content.0.user.username }}" class="w-10 h-10 rounded-full"> <!-- Profile Picture -->
+                            <h1 class="text-lg font-semibold">by: <strong>{{ current_content.0.user.username }}</strong></h1> <!-- Larger Text -->
+                        </a>
                     
                     {% endif %}
             </div>
@@ -70,29 +93,55 @@
                 <a href="{% if current_content.has_next %}?page={{ current_content.next_page_number }}{% else %}?page=1{% endif %}" class="bg-green-500 text-white px-4 py-2 rounded {% if not current_content.has_next %}hidden{% endif %}">Next</a>
             </div>
 
-                <!-- Comment Form -->
-                <div class="w-2/5 mt-8">
-                    <h2 class="text-xl font-semibold mb-4">Add Comment</h2>
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ comment_form.as_p }}
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">Submit Comment</button>
-                    </form>
-                </div>
-            
-                <!-- List of Comments -->
-                <div class="w-2/5 mt-8">
-                    <h2 class="text-xl font-semibold mb-4">Comments</h2>
-                    <ul>
-                        {% for comment in current_content.0.comments.all %}
-                            <li class="mb-4">
-                                <strong>{{ comment.creator.username }}:</strong> {{ comment.comment }}
-                            </li>
-                        {% empty %}
-                            <li>No comments yet.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+            <button class="like-button"
+                data-content-type="{{ content_type }}"
+                data-object-id="{{ object_id }}"
+                data-liked="{% if liked %}True{% else %}False{% endif %}">
+                {% if liked %}
+                    Unlike
+                {% else %}
+                    Like
+                {% endif %}
+            </button>
+
+            <!-- Display Like Count -->
+            <span id="like-count">{{ content.likes.count }}</span>
+
+        
+            <button class="save-button"
+                data-content-type="{{ content_type }}"
+                data-object-id="{{ object_id }}"
+                data-liked="{% if saved %}True{% else %}False{% endif %}">
+                {% if saved %}
+                    saved
+                {% else %}
+                    save
+                {% endif %}
+            </button>
+
+
+        <!-- Comment Form -->
+        <div class="w-2/5 mt-8">
+            <h2 class="text-xl font-semibold mb-4">Add Comment</h2>
+
+            <form id="comment-form">
+                {% csrf_token %}
+                <textarea name="comment" required rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 shadow-sm" placeholder="Enter your Comment..."></textarea>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50">
+                    Submit Comment
+                </button>
+                
+            </form>
+
+            <br>
+            <br>
+
+            <div id="comments-container">
+                <!-- Comments will be rendered here -->
+            </div>
+    
+            </div>
+        </div>
 
 
         {% else %}
@@ -101,6 +150,7 @@
 
 
     </div>
+
 {% endblock %}
 
 

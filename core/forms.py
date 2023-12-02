@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Comment
+from .models import Comment, Profile, VideoComment
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
@@ -40,3 +40,16 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['comment'] 
 
+class VideoCommentForm(forms.ModelForm):
+    class Meta:
+        model = VideoComment
+        fields = ['comment']
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['description', 'profile_pic']
+        widgets = {
+            'description': forms.TextInput(attrs={'class': 'w-full py-4 px-6 rounded-xl', 'placeholder': 'Description'}),
+            'profile_pic': forms.FileInput(attrs={'class': 'w-full py-4 px-6 rounded-xl'}),
+        }

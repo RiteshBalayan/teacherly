@@ -37,3 +37,4 @@ class CommentAdmin(admin.ModelAdmin):
     inlines = [LikeInline, ReplyInline]
 
 admin.site.register(Profile)
+admin.site.register(VideoComment)

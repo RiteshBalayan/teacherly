@@ -5,6 +5,8 @@ from .models import Question
 from .forms import QuestionForm, QuestionOptionForm
 from core.forms import CommentForm
 from django.contrib.contenttypes.models import ContentType
+from core.models import Like, Endorse, Save, Comment, VideoComment
+from django.db.models import Count
 
 
 @login_required
@@ -35,22 +37,22 @@ def ask_question(request):
 def question(request, pk):
     question = get_object_or_404(Question, pk=pk)
 
-    if request.method == 'POST':
-        comment_form = CommentForm(request.POST)
-        if comment_form.is_valid():
-            comment = comment_form.save(commit=False)
-            comment.creator = request.user
-            comment.content_type = ContentType.objects.get_for_model(question)  # Assuming Page is the model you want to associate comments with
-            comment.object_id = question.id  # Get the ID of the current page
-            comment.save()
-            return redirect('question', pk=question.id)
-
-    else:
-        comment_form = CommentForm()
+    #data to pass for generic realtions, see java script in base.html
+    content_type = ContentType.objects.get_for_model(question)
+    object_id = question.id
+    # Annotate each VideoComment with the count of related likes and order them
+    top_video_comments = VideoComment.objects.filter(
+        content_type=content_type, 
+        object_id=object_id
+    )
+    # Get the top liked video comment if it exists
+    top_video_comment = top_video_comments.first() if top_video_comments.exists() else None
 
     return render(request, 'content/question.html', {
         'question': question,
-        'comment_form' : comment_form,
+        'content_type': content_type.model,
+        'object_id': object_id,
+        'top_video_comment':top_video_comment,
     })
 
 @login_required

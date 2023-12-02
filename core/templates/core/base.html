@@ -7,6 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jquarry for axax java script -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 
     <title>
         {% block title %}
@@ -26,7 +30,7 @@
         <div class="space-x-6">
             {% if request.user.is_authenticated %}
                 <div class="flex items-center space-x-2">
-                    <a href="#" class="flex items-center space-x-2">
+                    <a href="{% url 'user_profile' pk=request.user.id %}" class="flex items-center space-x-2">
                         <span class="text-lg font-semibold">{{ request.user.username }}</span>
                         <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-300">
                             {% if request.user.Profile.profile_pic %}
@@ -34,8 +38,6 @@
                             {% endif %}
                         </div>
                     </a>
-                    <a href="#" class="px-6 py-3 text-lg font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">My Cources</a>
-                    <a href="#" class="px-6 py-3 text-lg font-semibold bg-gray-500 text-white rounded-xl hover:bg-gray-700">My Saves</a>
                     <a href="{% url 'logout' %}" class="px-6 py-3 text-lg font-semibold bg-teal-500 text-white rounded-xl hover:bg-teal-700">Logout</a>
                     
                     
@@ -112,6 +114,196 @@
             sidebar.classList.add('-translate-x-full');
         });
     </script>
+
+    <!-- JavaScript for Like/Unlike -->
+<script>
+    $(document).ready(function() {
+        $('.like-button').on('click', function() {
+            var button = $(this);
+            var item_id = button.data('object-id');
+            var content_type = button.data('content-type');
+            var liked = button.data('liked') === 'True';
+            var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: `/like/${content_type}/${item_id}/`,
+                data: {
+                    'csrfmiddlewaretoken': csrftoken,
+                },
+                success: function(response) {
+                    if (response.liked) {
+                        // User liked the item
+                        button.data('liked', 'True');
+                        button.text('Unlike');
+                    } else {
+                        // User unliked the item
+                        button.data('liked', 'False');
+                        button.text('Like');
+                    }
+                    // Update like count
+                    $('#like-count').text(response.like_count);
+                }
+            });
+        });
+    });
+</script>
+
+<!-- JavaScript for Endorse -->
+<script>
+    $(document).ready(function() {
+        $('.endorse-button').on('click', function() {
+            var button = $(this);
+            var item_id = button.data('object-id');
+            var content_type = button.data('content-type');
+            var liked = button.data('endorsed') === 'True';
+            var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: `/endorse/${content_type}/${item_id}/`,
+                data: {
+                    'csrfmiddlewaretoken': csrftoken,
+                },
+                success: function(response) {
+                    if (response.endorsed) {
+                        // User liked the item
+                        button.data('endorsed', 'True');
+                        button.text('un-endorse');
+                    } else {
+                        // User unliked the item
+                        button.data('endorsed', 'False');
+                        button.text('endorse');
+                    }
+                    // Update like count
+                    $('#endorse-count').text(response.endorse_count);
+                }
+            });
+        });
+    });
+</script>
+
+<!-- JavaScript for Save -->
+<script>
+    $(document).ready(function() {
+        $('.save-button').on('click', function() {
+            var button = $(this);
+            var item_id = button.data('object-id');
+            var content_type = button.data('content-type');
+            var liked = button.data('saved') === 'True';
+            var csrftoken = $('input[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: `/save/${content_type}/${item_id}/`,
+                data: {
+                    'csrfmiddlewaretoken': csrftoken,
+                },
+                success: function(response) {
+                    if (response.saved) {
+                        // User liked the item
+                        button.data('saved', 'True');
+                        button.text('saved');
+                    } else {
+                        // User unliked the item
+                        button.data('saved', 'False');
+                        button.text('save');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Java Script to fetch comment-->
+<script>
+// Function to fetch comments using AJAX
+function fetchComments() {
+    var content_type = "{{ content_type }}"; // Replace with the actual content type variable
+    var object_id = "{{ object_id }}"; // Replace with the actual object ID
+
+    $.ajax({
+        url: `/fetchcomments/${content_type}/${object_id}/`,
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            var commentsContainer = $('#comments-container');
+
+            // Clear existing comments
+            commentsContainer.empty();
+
+            // The comments are now an array of dictionaries
+            var comments = data.comments; // No need to parse, as we're already getting a JSON
+
+            // Loop through the comments and append them to the container
+            comments.forEach(function (comment) {
+                var commentDiv = $('<div>');
+                
+                // Update this part to make the username a clickable link
+                var creatorElement = $('<a>')
+                    .text(comment.creator_name) // Display creator's name
+                    .attr('href', '/profile/' + comment.creator_id) // Link to the user's profile
+                    .css('font-weight', 'bold'); // Optional: Add styling
+
+                var commentElement = $('<span>').text(': ' + comment.comment); // Directly using 'comment' field
+                
+                // Append the creator and comment elements to the commentDiv
+                commentDiv.append(creatorElement, commentElement);
+
+                // Append the commentDiv to the container
+                commentsContainer.append(commentDiv);
+            });
+        },
+        error: function (error) {
+            console.error('Error fetching comments: ' + error);
+        }
+    });
+}
+
+// Fetch comments every second (1000 milliseconds)
+setInterval(fetchComments, 1000);
+
+// Initial fetch when the page loads
+$(document).ready(fetchComments);
+
+    </script>
+
+
+<!-- Java Script for submiting comments-->
+<script>
+    $(document).ready(function() {
+        $('#comment-form').on('submit', function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+    
+            // Get the CSRF token
+            var csrftoken = $('[name=csrfmiddlewaretoken]').val();
+    
+            $.ajax({
+                url: `/post_comment/{{ content_type }}/{{ object_id }}/`, // Use the Django template variables
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        // Handle success
+                        $('#comment-form')[0].reset();
+                    } else {
+                        // Handle form errors
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    // Handle AJAX errors
+                }
+            });
+        });
+    });
+    </script>
+
+
 </body>
 
 </html>

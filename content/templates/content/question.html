@@ -7,38 +7,114 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="flex flex-col items-center">
     <div class="container mx-auto mt-8">
         <h1 class="text-2xl font-semibold mb-4">Question</h1>
 
+        <!-- Display Question -->
         <div class="mb-4">
             <p class="text-lg">{{ question.question_text }}</p>
         </div>
 
-        <!-- List of Comments -->
+        
         <div class="w-2/3">
-            <h2 class="text-xl font-semibold mb-4">Answers</h2>
-            <ul>
-                {% for comment in question.comments.all %}
-                    <li class="mb-4">
-                        <span class="font-semibold">{{ comment.creator.username }}:</span>
-                        <span class="ml-2">{{ comment.comment }}</span>
-                    </li>
-                {% empty %}
-                    <li>No comments yet.</li>
-                {% endfor %}
-            </ul>
+        <!-- Like Button -->
+            
+            <button class="like-button"
+            data-content-type="{{ content_type }}"
+            data-object-id="{{ object_id }}"
+            data-liked="{% if liked %}True{% else %}False{% endif %}">
+            {% if liked %}
+                Unlike
+            {% else %}
+                Like
+            {% endif %}
+        </button>
+
+
+        <!-- Display Like Count -->
+        <span id="like-count">{{ question.likes.count }}</span>
+
+
+        <!-- Endorse Button -->
+            
+                <button class="endorse-button"
+                data-content-type="{{ content_type }}"
+                data-object-id="{{ object_id }}"
+                data-liked="{% if endorsed %}True{% else %}False{% endif %}">
+                {% if endorsed %}
+                    un-endorse
+                {% else %}
+                    endorse
+                {% endif %}
+            </button>
+    
+    
+        <!-- Display endorse Count -->
+            <span id="endorse-count">{{ question.endorse.count }}</span>
+        
+
+        <!-- Save Button -->
+            
+                <button class="save-button"
+                data-content-type="{{ content_type }}"
+                data-object-id="{{ object_id }}"
+                data-liked="{% if saved %}True{% else %}False{% endif %}">
+                {% if saved %}
+                    saved
+                {% else %}
+                    save
+                {% endif %}
+            </button>
+
+        <br>
+        <br>
+        <br>
+        
+        <!--Display top video comment-->
+        {% if top_video_comment %}
+        <h1 class="text-2xl font-semibold mb-4">Top Video Answer</h1>
+        <!-- Video player adjusted to fit container size -->
+            <video class="w-full h-full" controls="controls">
+            <source src="{{top_video_comment.comment.url}}" type="video/mp4" />
+        </video>
+        {% endif %}
+        <br>
+        <br>
+        <!--Add Video Comment -->
+        <a href="{% url 'post_video_comment' content_type=content_type object_id=object_id %}" 
+            class="inline-block bg-green-500 text-white text-lg font-semibold px-6 py-3 rounded-md shadow-md hover:bg-green-600 hover:shadow-lg transition duration-300 ease-in-out">
+            <h1>Add Video Comment</h1>
+        </a>
+
+        <br>
+        <br>
+        <h1 class="text-2xl font-semibold mb-4">Answers by community</h1>
+
+        <!-- Add an element to display comments -->
+            <div id="comments-container">
+            <!-- Comments will be rendered here -->
+            </div>
+
         </div>
 
         <!-- Comment Form -->
-        <div class="w-2/3 mt-8">
+        <div class="w-2/5 mt-8">
             <h2 class="text-xl font-semibold mb-4">Add Answer</h2>
-            <form method="post" class="space-y-2">
+
+            <form id="comment-form">
                 {% csrf_token %}
-                {{ comment_form.as_p }}
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">
+                <textarea name="comment" required rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 shadow-sm" placeholder="Enter your Answer..."></textarea>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50">
                     Submit Answer
                 </button>
+                
             </form>
         </div>
     </div>
+</div>
+
+
+
 {% endblock %}
