@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import Topic, Course, Chapter, Page
+from .models import Topic, Course, Chapter, Page, StudentProgress
 from core.models import Comment, Commentable, Like, Likable, Save, Savable
 from django.contrib.contenttypes.admin import GenericTabularInline
+
+admin.site.register(StudentProgress)
 
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):

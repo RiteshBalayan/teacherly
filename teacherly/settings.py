@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core',
     'course',
     'content',
+    'embed_video',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+# Example settings
+EMBED_VIDEO_BACKENDS = (
+    'embed_video.backends.YoutubeBackend',
+    'embed_video.backends.VimeoBackend',
+    'embed_video.backends.SoundCloudBackend',
+)
+
+EMBED_VIDEO_TIMEOUT = 10  # Set a timeout for retrieving video data in seconds (default is 5)

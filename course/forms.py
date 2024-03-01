@@ -1,5 +1,7 @@
 from django import forms
 from .models import Course, Chapter, Page
+from content.models import URLVideo
+
 
 class CourseForm(forms.ModelForm):
     class Meta:
@@ -39,3 +41,10 @@ class ArticleFormCourse(forms.ModelForm):
     class Meta:
         model = Article
         fields = [ 'title', 'content','bitesizable']
+
+
+
+class URLVideoFormCourse(forms.ModelForm):
+    class Meta:
+        model = URLVideo
+        fields = [ 'title', 'video_url', 'explanation']

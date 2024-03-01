@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-
+{% load embed_video_tags %}
 {% block title %} Page {% endblock %}
 
 {% block section %}
@@ -93,6 +93,26 @@
                     <p> no Content</p>
                 {% endfor %}
             {% endif %}
+
+            {% if urlvideos.exists %}
+
+            {% for urlvideo in urlvideos %}
+
+
+                <!-- Display question content -->
+                <p>{{ urlvideo.title }}</p>
+                <br>
+                <!-- Embed video -->
+                {% video urlvideo.video_url 'medium' %}
+
+                <h1>{{ urlvideo.explanation }}</h1>
+            {% empty %}
+                <p> no Content</p>
+            {% endfor %}
+
+            {% endif %}
+
+
     
         </div>
     </div>
@@ -102,5 +122,13 @@
 <div class="bg-gradient-to-r from-yellow-300 to-red-500 p-4 mt-4 rounded-lg text-center">
     <a href="{% url 'add_page' pk=course.id chapter_pk=chapter.id page_pk=page.id %}" class="text-white font-bold text-xl hover:underline">Add Now</a>
 </div>
+
+<div class="bg-gradient-to-r from-yellow-300 to-red-500 p-4 mt-4 rounded-lg text-center">
+<form method="post" id="delete-page-form">
+    {% csrf_token %}
+    <input class="text-white font-bold text-xl hover:underline" type="submit" value="Delete Page">
+</form>
+</div>
+
 
 {% endblock %}

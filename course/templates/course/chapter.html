@@ -1,5 +1,5 @@
 {% extends 'core/base2.html' %}
-
+{% load embed_video_tags %}
 {% block title %} Home {% endblock %}
 
 {% block section %}
@@ -28,6 +28,25 @@
         
             <!-- Container with aspect ratio -->
             <div class="aspect-w-9 aspect-h-16 w-2/5 mb-4 bg-gray-200 relative">
+
+                <div class="flex">
+                    <h6>Pages list:</h6>
+                    {% for page in chapter_pages %}
+                    <div class="mr-4">
+                        <p>{{ page }} > </p>
+                    </div>
+                    {% endfor %}
+                </div>
+            
+                <div class="flex">
+                    <h6>your Progress:</h6>
+                    {% for page in viewed_pages %}
+                    <div class="mr-4">
+                        <p class="text-green-800">{{ page }}  </p>
+                    </div>
+                    {% endfor %}
+                </div>
+
                 {% if current_page %}
                     
 
@@ -94,6 +113,27 @@
 
                     
                     {% endif %}
+
+
+                    {% if current_page.0.URLVideo.all.exists %}
+
+                    {% for urlvideo in current_page.0.URLVideo.all %}
+    
+                        {% if urlvideo.title %}
+                        <!-- Display question content -->
+                            <p>{{ urlvideo.title }}</p>
+                            <br>
+                            <!-- Embed video -->
+                            {% video urlvideo.video_url  'medium' %}
+
+                            <h1>{{ urlvideo.explanation }}</h1>
+
+                        {% endif %}
+                    {% empty %}
+                            <p> no Content</p>
+                    {% endfor %}
+
+                    {% endif %}
             </div>
 
             <!-- Navigation buttons below the player -->
@@ -130,6 +170,12 @@
             <p class="text-lg text-gray-500">No content available.</p>
         {% endif %}
     </div>
+
+
+
+
+
+
 
 
 

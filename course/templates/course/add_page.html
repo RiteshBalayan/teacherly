@@ -36,6 +36,12 @@
     </a>
 
     <!-- Box for Creating a Video -->
+    <a href="{% url 'create_urlvideo_course' pk=course.id chapter_pk=chapter.id page_pk=page.id %}" class="box-link">
+        <div class="box bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg">
+            Add YouTube
+        </div>
+
+    <!-- Box for Creating a Video -->
     <a href="{% url 'create_video_course' pk=course.id chapter_pk=chapter.id page_pk=page.id %}" class="box-link">
         <div class="box bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg">
             Create Video

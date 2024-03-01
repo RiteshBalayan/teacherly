@@ -1,7 +1,10 @@
-from .models import  Video, Article, Image, Question, QuestionOption
+from .models import  Video, Article, Image, Question, QuestionOption, URLVideo
 from django.contrib import admin
 from core.models import Like, Likable, Comment, Commentable, Endorse, VideoComment, Endorsable, VideoCommentable, Save, Savable
 from django.contrib.contenttypes.admin import GenericTabularInline
+
+
+admin.site.register(URLVideo)
 
 # Define a generic inline for comments
 class CommentInline(GenericTabularInline):

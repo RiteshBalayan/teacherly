@@ -13,5 +13,6 @@ urlpatterns = [
     path('edit/<int:pk>/<int:chapter_pk>/<int:page_pk>/video/', views.create_video_course, name='create_video_course'),
     path('edit/<int:pk>/<int:chapter_pk>/<int:page_pk>/image/', views.create_image_course, name='create_image_course'),
     path('edit/<int:pk>/<int:chapter_pk>/<int:page_pk>/article/', views.create_article_course, name='create_article_course'),
+    path('create/<int:pk>/<int:chapter_pk>/<int:page_pk>/urlvideo/', views.create_urlvideo_course, name='create_urlvideo_course'),
 
 ]

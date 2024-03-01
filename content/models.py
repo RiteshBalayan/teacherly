@@ -2,7 +2,17 @@ from django.db import models
 from django.contrib.auth.models import User
 from course.models import Page
 from core.models import Likable, Commentable, Endorsable, VideoCommentable, Savable
+from embed_video.fields import EmbedVideoField
 
+class URLVideo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE )
+    title = models.CharField(max_length=200)
+    video_url = EmbedVideoField()  
+    explanation = models.TextField(blank=True)
+    course = models.ForeignKey(Page, on_delete=models.SET_NULL, null=True, blank=True, related_name='URLVideo')
+
+    def __str__(self):
+        return self.title
 
 
 class Video(Likable, Commentable, Savable):

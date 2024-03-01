@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from core.models import Commentable, Likable, Savable
+from core.models import Commentable, Likable, Savable, Profile
 
 class Topic(models.Model):
     title = models.CharField(max_length=100)
@@ -61,3 +61,14 @@ class Page(Commentable):
             else:
                 self.serial_number = 1
         super().save(*args, **kwargs)
+
+class StudentProgress(models.Model):
+    student = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='StudentProgress')
+    page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name='page_StudentProgress')
+    clicked = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ['student', 'page']
+
+    def __str__(self):
+        return f"{self.student.user_id} - {self.page.chapter}|{self.page.title} - Clicked: {self.clicked}"

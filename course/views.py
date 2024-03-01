@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Course, Chapter, Page
+from .models import Course, Chapter, Page, StudentProgress
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import CourseForm, ChapterForm, PageForm, VideoFormCourse, ImageFormCourse, ArticleFormCourse
+from .forms import CourseForm, ChapterForm, PageForm, VideoFormCourse, ImageFormCourse, ArticleFormCourse, URLVideoFormCourse
 from django.contrib.auth.decorators import login_required
 from content.models import Article, Image, Video, Question
 from core.forms import CommentForm
 from django.contrib.contenttypes.models import ContentType
+from content.models import URLVideo
 
 # Create your views here.
 
@@ -52,11 +53,42 @@ def Chapter_view(request, pk, chapter_pk):
     else:
         comment_form = CommentForm()
 
+
+    current_page_instance = str(type(current_page.object_list[0].id))
+    this_page = Page.objects.get(pk=current_page.object_list[0].id)
+    # Check if the user has already clicked on this page
+    page_click, created = StudentProgress.objects.get_or_create(student=request.user.Profile, page=this_page)
+    if created:
+        # If the page click object was just created, mark the page as clicked
+        page_click.clicked = True
+        page_click.save()
+
+    # Get all pages associated with the current chapter
+    page_list = list(chapter.page.all())
+
+        # Extract titles from each page
+    chapter_pages = [page.title for page in page_list]
+
+    
+    # Check if the user has viewed each page and mark it accordingly
+    viewed_pages = []
+    for page in page_list:
+        try:
+            StudentProgress.objects.get(student=request.user.Profile, page=page)
+            viewed_pages.append(page.title)
+        except StudentProgress.DoesNotExist:
+            pass
+
+
+
     return render(request, 'course/chapter.html', {
         'current_page': current_page,
         'course':course,
         'chapter':chapter,
         'comment_form': comment_form,
+        'current_page_instance': current_page_instance,
+        'chapter_pages': chapter_pages,
+        'viewed_pages': viewed_pages,
     })
 
 @login_required
@@ -127,6 +159,14 @@ def page(request, pk, chapter_pk, page_pk):
     images = Image.objects.filter(course=page)
     videos = Video.objects.filter(course=page)
     questions = Video.objects.filter(course=page)
+    urlvideos = URLVideo.objects.filter(course=page)
+    # Check if any content is available
+    content_available = any([articles, images, videos, questions, urlvideos])
+
+    if request.method == "POST":
+
+        page.delete()
+        return redirect('create_page', pk=course.id, chapter_pk=chapter.id ) 
 
 
     return render(request, 'course/page.html', {
@@ -137,6 +177,9 @@ def page(request, pk, chapter_pk, page_pk):
         'images': images,
         'videos': videos,
         'questions' : questions,
+        'profile' : request.user.Profile,
+        'urlvideos': urlvideos,
+        'content_available':content_available,
     })
 
 
@@ -218,5 +261,27 @@ def create_article_course(request, pk, chapter_pk, page_pk):
         'page' : page,
         })
 
+
+@login_required
+def create_urlvideo_course(request, pk, chapter_pk, page_pk):
+    course = get_object_or_404(Course, pk=pk)
+    chapter = get_object_or_404(Chapter, pk=chapter_pk)
+    page = get_object_or_404(Page, pk=page_pk)
+    if request.method == 'POST':
+        form = URLVideoFormCourse(request.POST)
+        if form.is_valid():
+            urlvideo = form.save(commit=False)
+            urlvideo.user = request.user
+            urlvideo.course = page
+            urlvideo.save()
+            return redirect('page', pk=course.id, chapter_pk=chapter.id, page_pk=page.id)
+    else:
+        form = URLVideoFormCourse()
+    return render(request, 'course/urlvideo_form_content.html', {
+        'form': form,
+        'course' : course,
+        'chapter' : chapter,
+        'page' : page,
+        })
 
 
