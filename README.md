@@ -10,7 +10,7 @@ Teacherly is a full-fledged open access learning management system designed to e
 - **Content Formats:** Support for articles, videos, images, and YouTube embeds.
 - **Interactivity:** Users can interact with content by commenting, liking, and saving.
 - **Open Access:** No verification needed to add courses. Anyone can contribute.
-- **Domain:** Available at [www.teacherly.online](https://www.teacherly.online) for anyone to use.
+- **Domain:** Available at [www.teacherly.online](www.teacherly.online) for anyone to use.
 - **LMS for Startups:** Ideal for startups looking to establish an online learning platform.
 - **Tool for Educators:** Provides tools for small educators to create and share their content.
 - **Open Source:** Built as an open-source tutorial maker, fostering collaboration and innovation.
@@ -28,6 +28,6 @@ Teacherly aims to democratize education by providing a platform where knowledge 
 
 ## Get Started:
 
-Ready to start learning or teaching? Visit [www.teacherly.online](https://www.teacherly.online) and create your account to begin your educational journey today!
+Ready to start learning or teaching? Visit [www.teacherly.online](www.teacherly.online) and create your account to begin your educational journey today!
 
 For feedback and inquiries, please contact [balayanritesh@gmail.com](mailto:balayanritesh@gmail.com). Organizations interested in closed access LMS with additional features can reach out for customization options.
