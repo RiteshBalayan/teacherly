@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -141,3 +142,7 @@ EMBED_VIDEO_BACKENDS = (
 )
 
 EMBED_VIDEO_TIMEOUT = 10  # Set a timeout for retrieving video data in seconds (default is 5)
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

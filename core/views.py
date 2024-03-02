@@ -51,22 +51,16 @@ def update_profile(request):
 
 
 def bitesize(request):
-    # Check if the shuffled IDs are already in the session
-    if 'shuffled_content_ids' not in request.session:
-        # Retrieve the content and shuffle their IDs
-        videos = Video.objects.filter(bitesizable=True)
-        articles = Article.objects.filter(bitesizable=True)
-        images = Image.objects.filter(bitesizable=True)
-        video_answers = VideoComment.objects.all()
-        #questions = Question.objects.filter(pk=1000)
-        
-        content_ids = [(obj.__class__.__name__, obj.pk) for obj in chain(videos, articles, images, video_answers)]
-        shuffle(content_ids)
 
-        request.session['shuffled_content_ids'] = content_ids
-    else:
-        # Retrieve the shuffled IDs from the session
-        content_ids = request.session['shuffled_content_ids']
+    # Retrieve the content and shuffle their IDs
+    videos = Video.objects.filter(bitesizable=True)
+    articles = Article.objects.filter(bitesizable=True)
+    images = Image.objects.filter(bitesizable=True)
+    video_answers = VideoComment.objects.all()
+    #questions = Question.objects.filter(pk=1000)
+        
+    content_ids = [(obj.__class__.__name__, obj.pk) for obj in chain(videos, articles, images, video_answers)]
+    shuffle(content_ids)
 
     # Fetch the actual objects based on the stored IDs
     def get_object(model_name, pk):
@@ -100,11 +94,20 @@ def bitesize(request):
     else:
         comment_form = CommentForm()
 
-    object_id = current_content.object_list[0].id 
+    if current_content.object_list:  # Check if the list is not empty
+        object_id = current_content.object_list[0].id
+        content_type = ContentType.objects.get_for_model(current_content.object_list[0]).model
 
-    content_type = ContentType.objects.get_for_model(current_content.object_list[0]).model
+        content = current_content.object_list[0]
+        # Rest of your code using object_id
+    else:
+        # Handle the case when the list is empty
+        content_type = 'none'
+        object_id = 0
+        content = 'none'
 
-    content = current_content.object_list[0]
+        pass
+
 
 
     return render(request, 'core/bitesize.html', {

@@ -83,10 +83,17 @@
         <br>
         <br>
         <!--Add Video Comment -->
+        {% if user.is_authenticated %}
         <a href="{% url 'post_video_comment' content_type=content_type object_id=object_id %}" 
             class="inline-block bg-green-500 text-white text-lg font-semibold px-6 py-3 rounded-md shadow-md hover:bg-green-600 hover:shadow-lg transition duration-300 ease-in-out">
             <h1>Add Video Comment</h1>
         </a>
+        {% else %}
+        <a href="{% url 'login'  %}" 
+            class="inline-block bg-green-500 text-white text-lg font-semibold px-6 py-3 rounded-md shadow-md hover:bg-green-600 hover:shadow-lg transition duration-300 ease-in-out">
+            <h1>Add Video Comment</h1>
+        </a>
+        {% endif %}
 
         <br>
         <br>
@@ -106,9 +113,16 @@
             <form id="comment-form">
                 {% csrf_token %}
                 <textarea name="comment" required rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300 shadow-sm" placeholder="Enter your Answer..."></textarea>
+                {% if user.is_authenticated %}
                 <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50">
                     Submit Answer
                 </button>
+                {% else %}
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-opacity-50">
+                    Make account to answer
+                </button>
+                {% endif %}
+
                 
             </form>
         </div>

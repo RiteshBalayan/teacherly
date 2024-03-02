@@ -34,8 +34,12 @@
         {% if request.user == teacher %}
         <a href="{% url 'create_chapter' pk=course.id %}" class="mt-12 inline-block px-6 py-3 text-lg font-semibold text-gray-800 bg-white rounded-full hover:bg-teal-500 hover:text-white transition duration-300 ease-in-out">Edit Course</a>
         {% endif %}
-
+        
+        {% if user.is_authenticated %}
         <a href="{% url 'chapter' pk=course.id chapter_pk=1 %}" class="mt-12 inline-block px-6 py-3 text-lg font-semibold text-gray-800 bg-white rounded-full hover:bg-teal-500 hover:text-white transition duration-300 ease-in-out">Start</a>
+        {% else %}
+        <a href="{% url 'chapter' pk=course.id chapter_pk=1 %}" class="mt-12 inline-block px-6 py-3 text-lg font-semibold text-gray-800 bg-white rounded-full hover:bg-teal-500 hover:text-white transition duration-300 ease-in-out">Login to Start learning</a>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

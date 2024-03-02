@@ -7,12 +7,19 @@
     
     <p class="text-3xl font-bold text-gray-600">Course</p>
     <!-- Text with Box Leading to a Link -->
+    {% if user.is_authenticated %}
     <a href="{% url 'create_course' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full flex items-center space-x-2">
         <span>Teach</span>
     </a>
+    {% else %}
+    <a href="{% url 'login' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full flex items-center space-x-2">
+        <span>Teach</span>
+    </a>
+    {% endif %}
     <a href = "{% url 'bitesize' %}">
         <p class="text-base text-gray-600">Bitesize</p>
     </a>
+    
     <a href="{% url 'forum' %}">
         <p class="text-base text-gray-600">Forum</p>
     </a>

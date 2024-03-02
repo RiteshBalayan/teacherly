@@ -1,6 +1,15 @@
+# Ignore virtual environment
+env/
 
-env
-
-__pycache__/
+# Ignore Python byte-compiled files
 *.pyc
+*.pyo
+__pycache__/
 
+# Ignore Django database file
+db.sqlite3
+
+# Ignore static folder
+staticfiles/
+
+media/
