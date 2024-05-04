@@ -42,11 +42,14 @@ INSTALLED_APPS = [
     'course',
     'content',
     'embed_video',
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -146,3 +149,7 @@ EMBED_VIDEO_TIMEOUT = 10  # Set a timeout for retrieving video data in seconds (
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+]
